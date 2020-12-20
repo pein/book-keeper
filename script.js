@@ -6,6 +6,7 @@ const websiteNameEL = document.getElementById("website-name");
 const websiteUrlEL = document.getElementById("website-url");
 const bookmarksContainer = document.getElementById("bookmarks-container");
 
+let bookmarks = [];
 // Show Modal, Focus on input
 function showModal() {
   modal.classList.add("show-modal");
@@ -27,6 +28,17 @@ function validate(nameValue, urlValue) {
   return true;
 }
 
+// Fetch bookmarks fro; localStorage
+function fetchBookmarks() {
+  if (localStorage.getItem("bookmarks")) {
+    bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
+    console.log("local storage 333", localStorage.getItem("bookmarks"));
+  } else {
+    bookmarks = [{ name: "Zero toMastery", url: "http://werotomastery.io" }];
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    console.log("local storage 2222", localStorage.getItem("bookmarks"));
+  }
+}
 // Handel Data from form
 function storebookmark(e) {
   e.preventDefault();
@@ -38,7 +50,20 @@ function storebookmark(e) {
   if (!validate(nameValue, urlValue)) {
     return false;
   }
+
+  const bookmark = {
+    name: nameValue,
+    url: urlValue,
+  };
+
+  bookmarks.push(bookmark);
+  console.log(bookmarks);
+  fetchBookmarks();
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+  bookmarkForm.reset();
+  websiteNameEL.focus();
 }
+
 // Event Listners
 modalShow.addEventListener("click", showModal);
 modalClose.addEventListener("click", () => {
@@ -49,3 +74,6 @@ window.addEventListener("click", (e) => {
 });
 
 bookmarkForm.addEventListener("submit", storebookmark);
+
+// On Load
+fetchBookmarks();
