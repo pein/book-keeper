@@ -14,6 +14,8 @@ function showModal() {
 
 // Build  booksmarks DOM
 function buildBookmarks() {
+  // Remove all bookmarks
+  bookmarksContainer.textContent = "";
   // Build items
   bookmarks.forEach((bookmark) => {
     const { name, url } = bookmark;
@@ -24,7 +26,7 @@ function buildBookmarks() {
     const closeIcon = document.createElement("i");
     closeIcon.classList.add("fas", "fa-times");
     closeIcon.setAttribute("title", "Delete Bookmark");
-    closeIcon.setAttribute("onclick", `deleteBookmar('${url}')`);
+    closeIcon.setAttribute("onclick", `deleteBookmark('${url}')`);
     // Favicon / Link Container
     const linkInfo = document.createElement("div");
     linkInfo.classList.add("name");
@@ -62,14 +64,28 @@ function validate(nameValue, urlValue) {
   return true;
 }
 
-// Fetch bookmarks fro; localStorage
+// Fetch bookmarks from localStorage
 function fetchBookmarks() {
   if (localStorage.getItem("bookmarks")) {
     bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
   } else {
-    bookmarks = [{ name: "Zero to Mastery", url: "http://werotomastery.io" }];
+    bookmarks = [{ name: "Zero to Mastery", url: "http://zerotomastery.io" }];
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   }
+  buildBookmarks();
+}
+
+// Delet Bookmark
+function deleteBookmark(url) {
+  console.log(url);
+  bookmarks.forEach((bookmark, index) => {
+    if (bookmark.url === url) {
+      bookmarks.splice(index, 1);
+    }
+    localStorage.setItem("booksmarks", JSON.stringify(bookmarks));
+    fetchBookmarks();
+    buildBookmarks();
+  });
 }
 // Handel Data from form
 function storebookmark(e) {
@@ -90,8 +106,8 @@ function storebookmark(e) {
 
   bookmarks.push(bookmark);
   console.log(bookmarks);
-  fetchBookmarks();
   localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+  fetchBookmarks();
   bookmarkForm.reset();
   websiteNameEL.focus();
 }
@@ -109,4 +125,3 @@ bookmarkForm.addEventListener("submit", storebookmark);
 
 // On Load
 fetchBookmarks();
-buildBookmarks();
